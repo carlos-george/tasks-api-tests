@@ -20,7 +20,7 @@ public class ApiTest {
 	}
 
 	@Test
-	public void deveRetornarTarefa() {
+	public void deveRetornarTarefas() {
 		
 		RestAssured
 			.given()
@@ -70,5 +70,30 @@ public class ApiTest {
 			.statusCode(NAD_REQUEST)
 			.body("message", CoreMatchers.is("Due date must not be in past"));
 		
+	}
+	
+	@Test
+	public void deveRemoverTasksComSucesso() {
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append("{");
+		sb.append("\"task\":\"Test Api way task to remove\",");
+		sb.append("\"dueDate\":\"2021-10-20\"");
+		sb.append("}");
+		
+		Integer takstId = RestAssured
+			.given()
+				.body(sb.toString()).contentType(ContentType.JSON)
+			.when()
+				.post("/todo")
+			.then()
+				.statusCode(STATUS_CODE_CREATED)
+				.extract().path("id");
+		
+		RestAssured
+			.when()
+				.delete("/todo/" + takstId)
+			.then()
+				.statusCode(204);
 	}
 }
